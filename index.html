@@ -130,12 +130,12 @@
                 const data = await response.json();
                 if (data.length > 0) {
                     const student = data[0];
- // Iterate over the student data and skip "CPR" and "اسم الطالب"
-                    for (const [key, value] of Object.entries(student)) {
-                        if (key !== "CPR" && key !== "اسم الطالب")
+
                     let tableRows = '';
 
-                    {
+                    // Iterate over the student data and skip "CPR" and "اسم الطالب"
+                    for (const [key, value] of Object.entries(student)) {
+                        if (key !== "CPR" && key !== "اسم الطالب") {
                             tableRows += `<tr><td>${value}</td><td>${key}</td></tr>`;
                         }
                     }
