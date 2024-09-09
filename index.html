@@ -108,6 +108,14 @@
     <div id="loading" class="hidden">...جاري التحميل</div>
     <div class="student-name" id="studentName"></div>
     <div id="result" class="hidden"></div>
+  
+    <!-- Popup for error message -->
+    <div class="popup" id="errorPopup">
+        <div class="popup-content">
+            <p>الرجاء التأكد من الرقم الشخصي</p>
+            <button onclick="closePopup()">إغلاق</button>
+        </div>
+    </div>
 
     <script>
         async function fetchGrades() {
@@ -116,11 +124,13 @@
             const resultDiv = document.getElementById('result');
             const studentNameDiv = document.getElementById('studentName');
             const loadingDiv = document.getElementById('loading');
+          const errorPopup = document.getElementById('errorPopup');
 
             resultDiv.innerHTML = '';
             resultDiv.classList.add('hidden');
             studentNameDiv.innerHTML = '';
             loadingDiv.classList.remove('hidden'); // Show loading indicator
+           errorPopup.style.display = 'none'; // إخفاء النافذة المنبثقة
             try {
                 const response = await fetch(`https://script.google.com/macros/s/AKfycbwI1v94_XjzgFmfeFzdsBOp7A8mn0_YhD2YfGJIe0vV086f7Fh2vhIiCFzH8U23PhILRw/exec?subject=${subject}&cpr=${cpr}`);
                 
@@ -152,12 +162,11 @@
                         `;
                         resultDiv.classList.remove('hidden');
                     } else {
-                        resultDiv.innerHTML = '<p>الرجاء التأكد من الرقم الشخصي</p>';
-                        resultDiv.classList.remove('hidden');
+                                               errorPopup.style.display = 'flex'; // عرض النافذة المنبثقة
+                     
                     }
                 } else {
-                    resultDiv.innerHTML = '<p>الرجاء التأكد من الرقم الشخصي</p>';
-                    resultDiv.classList.remove('hidden');
+                                            errorPopup.style.display = 'flex'; // عرض النافذة المنبثقة
                 }
             } catch (error) {
                 console.error(error);
@@ -166,6 +175,8 @@
             }finally {
                 loadingDiv.classList.add('hidden'); // Hide loading indicator
             }
+            function closePopup() {
+            document.getElementById('errorPopup').style.display = 'none'; // إخفاء النافذة المنبثقة
         }
     </script>
 </body>
