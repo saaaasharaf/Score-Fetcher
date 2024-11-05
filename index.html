@@ -133,74 +133,80 @@
     </div>
 
     <script>
-        async function fetchGrades() {
-            const cpr = document.getElementById('cprInput').value.trim();
-            const subject = encodeURIComponent(document.getElementById('subjectSelector').value);
-            const resultDiv = document.getElementById('result');
-            const studentNameDiv = document.getElementById('studentName');
-            const loadingDiv = document.getElementById('loading');
-            const errorPopup = document.getElementById('errorPopup');
-            const errorMessage = document.getElementById('errorMessage');
+       async function fetchGrades() {
+    const cpr = document.getElementById('cprInput').value.trim();
+    const subject = encodeURIComponent(document.getElementById('subjectSelector').value);
+    const resultDiv = document.getElementById('result');
+    const studentNameDiv = document.getElementById('studentName');
+    const loadingDiv = document.getElementById('loading');
+    const errorPopup = document.getElementById('errorPopup');
+    const errorMessage = document.getElementById('errorMessage');
 
-            resultDiv.innerHTML = '';
-            resultDiv.classList.add('hidden');
-            studentNameDiv.innerHTML = '';
-            loadingDiv.classList.remove('hidden'); // Show loading indicator
-            errorPopup.style.display = 'none'; // Hide popup
-            errorMessage.textContent = 'الرجاء التأكد من الرقم الشخصي'; // Reset error message
+    resultDiv.innerHTML = '';
+    resultDiv.classList.add('hidden');
+    studentNameDiv.innerHTML = '';
+    loadingDiv.classList.remove('hidden'); // Show loading indicator
+    errorPopup.style.display = 'none'; // Hide popup
+    errorMessage.textContent = 'الرجاء التأكد من الرقم الشخصي'; // Reset error message
 
-            if (!cpr || !subject) {
-                errorMessage.textContent = 'يرجى ملء جميع الحقول';
-                errorPopup.style.display = 'flex';
-                loadingDiv.classList.add('hidden'); // Hide loading indicator
-                return;
-            }
+    if (!cpr || !subject) {
+        errorMessage.textContent = 'يرجى ملء جميع الحقول';
+        errorPopup.style.display = 'flex';
+        loadingDiv.classList.add('hidden'); // Hide loading indicator
+        return;
+    }
 
-            try {
-                const response = await fetch(`https://script.google.com/macros/s/AKfycbyP9Lf7WXWa_RV-IgL4430m3TeMhNZcyafeDF0aBT8KL4BBG2rKuzXH5_B7o-bI1ZsrZA/exec?subject=${subject}&cpr=${cpr}`);
-                
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const data = await response.json();
-                if (data.length > 0) {
-                    const student = data[0];
-
-                    let tableRows = '';
-
-                    // Iterate over the student data and skip "CPR" and "اسم الطالب"
-                    for (const [key, value] of Object.entries(student)) {
-                        if (key !== "CPR" && key !== "اسم الطالب") {
-                            tableRows += `<tr><td>${value}</td><td>${key}</td></tr>`;
-                        }
-                    }
-
-                    if (tableRows) {
-                        resultDiv.innerHTML = `
-                            <h2>نتائج الدرجات</h2>
-                            <table>
-                                <tr><th>الدرجة</th><th>التقييم</th></tr>
-                                ${tableRows}
-                            </table>
-                        `;
-                        resultDiv.classList.remove('hidden');
-                    } else {
-                        errorMessage.textContent = 'لا توجد بيانات للعرض';
-                        errorPopup.style.display = 'flex'; // Show popup
-                    }
-                } else {
-                    errorMessage.textContent = 'لا توجد بيانات للعرض';
-                    errorPopup.style.display = 'flex'; // Show popup
-                }
-            } catch (error) {
-                console.error(error);
-                errorMessage.textContent = `خطأ في جلب البيانات: ${error.message}`;
-                errorPopup.style.display = 'flex'; // Show popup
-            } finally {
-                loadingDiv.classList.add('hidden'); // Hide loading indicator
-            }
+    try {
+        const response = await fetch(`https://script.google.com/macros/s/AKfycbyP9Lf7WXWa_RV-IgL4430m3TeMhNZcyafeDF0aBT8KL4BBG2rKuzXH5_B7o-bI1ZsrZA/exec?subject=${subject}&cpr=${cpr}`);
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+
+        const data = await response.json();
+        if (data.error) {
+            errorMessage.textContent = data.error; // Display specific error message from the server
+            errorPopup.style.display = 'flex'; // Show popup
+            return;
+        }
+
+        if (data.length > 0) {
+            const student = data[0];
+
+            let tableRows = '';
+
+            // Iterate over the student data and skip "CPR" and "اسم الطالب"
+            for (const [key, value] of Object.entries(student)) {
+                if (key !== "CPR" && key !== "اسم الطالب") {
+                    tableRows += `<tr><td>${value}</td><td>${key}</td></tr>`;
+                }
+            }
+
+            if (tableRows) {
+                resultDiv.innerHTML = `
+                    <h2>نتائج الدرجات</h2>
+                    <table>
+                        <tr><th>الدرجة</th><th>التقييم</th></tr>
+                        ${tableRows}
+                    </table>
+                `;
+                resultDiv.classList.remove('hidden');
+            } else {
+                errorMessage.textContent = 'لا توجد بيانات للعرض';
+                errorPopup.style.display = 'flex'; // Show popup
+            }
+        } else {
+            errorMessage.textContent = 'لا توجد بيانات للعرض';
+            errorPopup.style.display = 'flex'; // Show popup
+        }
+    } catch (error) {
+        console.error(error);
+        errorMessage.textContent = `خطأ في جلب البيانات: ${error.message}`;
+        errorPopup.style.display = 'flex'; // Show popup
+    } finally {
+        loadingDiv.classList.add('hidden'); // Hide loading indicator
+    }
+}
 
         function closePopup() {
             document.getElementById('errorPopup').style.display = 'none'; // Hide popup
