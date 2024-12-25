@@ -74,7 +74,6 @@
             font-weight: bold;
             font-size: 1.2em;
         }
-        /* Styles for popup */
         .popup {
             display: none;
             position: fixed;
@@ -92,30 +91,20 @@
             border-radius: 5px;
             text-align: center;
         }
-        .popup button {
-            margin-top: 10px;
-            background-color: #003366;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
-     <header>
+    <header>
         <img src="https://menafn.com/updates/pr/2020-01/05/AAK_33e2ac22-9image_story.png" width="200px">
     </header>
     <h1>مدرسة مدينة عيسى الإعدادية للبنين</h1>
     <h2>استعلام سجل الطالب</h2>
     <input type="text" id="cprInput" placeholder="CPR/ادخل الرقم الشخصي" required>
-   \
-    <button onclick="GetClass()">ارسال</button>
+    <button onclick="fetchGrades()">ارسال</button>
     <div id="loading" class="hidden">...جاري التحميل</div>
     <div class="student-name" id="studentName"></div>
     <div id="result" class="hidden"></div>
 
-    <!-- Popup for error message -->
     <div class="popup" id="errorPopup">
         <div class="popup-content">
             <p>الرجاء التأكد من الرقم الشخصي</p>
@@ -126,7 +115,6 @@
     <script>
         async function fetchGrades() {
             const cpr = document.getElementById('cprInput').value;
-            const subject = encodeURIComponent(document.getElementById('subjectSelector').value);
             const resultDiv = document.getElementById('result');
             const studentNameDiv = document.getElementById('studentName');
             const loadingDiv = document.getElementById('loading');
@@ -135,10 +123,10 @@
             resultDiv.innerHTML = '';
             resultDiv.classList.add('hidden');
             studentNameDiv.innerHTML = '';
-            loadingDiv.classList.remove('hidden'); // عرض مؤشر التحميل
-            errorPopup.style.display = 'none'; // إخفاء النافذة المنبثقة
+            loadingDiv.classList.remove('hidden');
+            errorPopup.style.display = 'none';
             try {
-            const response = await fetch(`https://script.google.com/macros/s/AKfycbwia2rYs4VrKl3jEgDY55cgwYG9kFx74oUgR76OeirqymuY74mwdalCUUCpYVGJLsuhCg/exec?CPR=${CPR}`););
+                const response = await fetch(`https://script.google.com/macros/s/AKfycbwia2rYs4VrKl3jEgDY55cgwYG9kFx74oUgR76OeirqymuY74mwdalCUUCpYVGJLsuhCg/exec?CPR=${cpr}`);
                 
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -147,10 +135,8 @@
                 const data = await response.json();
                 if (data.length > 0) {
                     const student = data[0];
-
                     let tableRows = '';
 
-                    // Iterate over the student data and skip "CPR" and "اسم الطالب"
                     for (const [key, value] of Object.entries(student)) {
                         if (key !== "CPR" && key !== "اسم الطالب") {
                             tableRows += `<tr><td>${value}</td><td>${key}</td></tr>`;
@@ -167,22 +153,22 @@
                         `;
                         resultDiv.classList.remove('hidden');
                     } else {
-                        errorPopup.style.display = 'flex'; // عرض النافذة المنبثقة
+                        errorPopup.style.display = 'flex';
                     }
                 } else {
-                    errorPopup.style.display = 'flex'; // عرض النافذة المنبثقة
+                    errorPopup.style.display = 'flex';
                 }
             } catch (error) {
                 console.error(error);
-                resultDiv.innerHTML = `<p>خطأ في جلب البيانات ${error.message}</p>`;
+                resultDiv.innerHTML = `<p>خطأ في جلب البيانات: ${error.message}</p>`;
                 resultDiv.classList.remove('hidden');
             } finally {
-                loadingDiv.classList.add('hidden'); // إخفاء مؤشر التحميل
+                loadingDiv.classList.add('hidden');
             }
         }
 
         function closePopup() {
-            document.getElementById('errorPopup').style.display = 'none'; // إخفاء النافذة المنبثقة
+            document.getElementById('errorPopup').style.display = 'none';
         }
     </script>
 
