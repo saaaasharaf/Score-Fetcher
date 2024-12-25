@@ -91,15 +91,15 @@ margin-top: 20px;
     }
 
     try {
-        const response = await fetch(`YOUR_GOOGLE_SCRIPT_URL?id=${studentId}`);
+        const response = await fetch(`https://script.google.com/macros/s/AKfycbyASchpojtLiSoUYg1fXfDUdUMKVwhDeQuTOkzIkJRcvhcHXjXv5xqycLIuwtpGa_UywA/exec?id=${studentId}`);
         
         if (!response.ok) {
             throw new Error('خطأ في الشبكة');
         }
 
         const data = await response.json();
-        console.log(data); // طباعة البيانات في وحدة التحكم
-
+console.log(JSON.stringify(data)); // طباعة الكائن بالكامل
+     
         if (data && data.id) {
             resultDiv.innerHTML = `<p>المقعد: ${data.seat}، الصف: ${data.class}</p>`;
         } else {
