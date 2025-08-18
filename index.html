@@ -59,7 +59,6 @@
         <img src="https://menafn.com/updates/pr/2020-01/05/AAK_33e2ac22-9image_story.png" width="200px">
     </header>
     <h1>مدرسة مدينة عيسى الإعدادية للبنين</h1>
-    <h2>استعلام جلوس</h2>
     <input type="text" id="cprInput" placeholder="ادخل الرقم الشخصي (CPR)" required>
     <button onclick="fetchGrades()">استعلام</button>
     <div id="loading">...جاري التحميل</div>
@@ -90,7 +89,7 @@
                 const data = await response.json();
                 if (data.length > 0) {
                     const student = data[0];
-                    resultDiv.innerHTML = `<h2>نتائج الجلوس</h2><p>اسم الطالب: ${student["اسم الطالب"]}</p><p>رقم الجلوس: ${student["الدرجة"]}</p>`;
+                    resultDiv.innerHTML = `<h2>معلومات الطالب</h2><p>اسم الطالب: ${student["اسم الطالب"]}</p><p>رقم الجلوس: ${student["الدرجة"]}</p>`;
                 } else {
                     resultDiv.innerHTML = '<p>لا توجد بيانات للرقم الشخصي المدخل.</p>';
                 }
@@ -105,3 +104,4 @@
     </script>
 </body>
 </html>
+
