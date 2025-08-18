@@ -89,7 +89,7 @@
                 const data = await response.json();
                 if (data.length > 0) {
                     const student = data[0];
-                    resultDiv.innerHTML = `<h2>معلومات الطالب</h2><p>اسم الطالب: ${student["اسم الطالب"]}</p><p>رقم الجلوس: ${student["الدرجة"]}</p>`;
+                    resultDiv.innerHTML = `<h2>معلومات الطالب</h2><p>اسم الطالب: ${student["اسم الطالب"]}</p><p>الصف: ${student["الدرجة"]}</p>`;
                 } else {
                     resultDiv.innerHTML = '<p>لا توجد بيانات للرقم الشخصي المدخل.</p>';
                 }
@@ -104,4 +104,5 @@
     </script>
 </body>
 </html>
+
 
