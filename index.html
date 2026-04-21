@@ -124,9 +124,10 @@
     </div>
 
     <script>
-async function fetchGrades() {
+async function fetchGrades()
+const subject = "الصف الاول"; // غيّر القيمة حسب ما يتوقعه سكربتكم{
   const cpr = document.getElementById('cprInput').value.trim();
-
+const subject = "DEFAULT_SUBJECT";
   const resultDiv = document.getElementById('result');
   const studentNameDiv = document.getElementById('studentName');
   const loadingDiv = document.getElementById('loading');
