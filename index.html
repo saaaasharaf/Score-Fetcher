@@ -198,12 +198,60 @@
         function closePopup() {
             document.getElementById('errorPopup').style.display = 'none';
         }
+
+        // تشغيل عداد الزوار عند تحميل الصفحة
+window.onload = function() {
+    updateVisitorCount();
+};
+
+async function updateVisitorCount() {
+    try {
+        // نرسل طلب للسكربت لإبلاغه بوجود زيارة جديدة
+        const response = await fetch(`https://script.google.com/macros/s/AKfycbxyh0rjbHe9Y3SfmxtRHoaFHzyexsmsvQX85t6e2vOiNab01eIbaDyg9fFjNW0dq8WnCA/exec?action=getCount`);
+        const data = await response.json();
+        document.getElementById('count').innerText = data.visitorCount;
+    } catch (e) {
+        document.getElementById('count').innerText = "1";
+    }
+}
+
+async function submitRating(stars) {
+    const status = document.getElementById('ratingStatus');
+    status.innerText = "جاري إرسال تقييمك...";
+    
+    try {
+        await fetch(`https://script.google.com/macros/s/AKfycbxyh0rjbHe9Y3SfmxtRHoaFHzyexsmsvQX85t6e2vOiNab01eIbaDyg9fFjNW0dq8WnCA/exec?rating=${stars}`);
+        status.innerText = "شكراً لتقييمك!";
+        // تعطيل الأزرار بعد التقييم لمنع التكرار
+        document.querySelectorAll('#ratingSection button').forEach(btn => btn.disabled = true);
+    } catch (e) {
+        status.innerText = "حدث خطأ أثناء التقييم.";
+    }
+}
     </script>
 
     <footer style="margin-top:30px;">
         <p>© مدرسة مدينة عيسى الإعدادية للبنين</p>
         <p>تصميم الأستاذ/ السيد علي شرف</p>
         <p>مدير المدرسة / الأستاذ عبدالله الديري</p>
+
+
+        <hr style="width: 80%; border: 0.5px solid #ccc; margin: 20px 0;">
+
+<div id="visitorCounter" style="font-size: 0.9em; margin-bottom: 10px;">
+    عدد الزيارات: <span id="count">...</span>
+</div>
+
+<div id="ratingSection">
+    <p>ما هو تقييمك للموقع؟</p>
+    <div style="direction: ltr;">
+        <button onclick="submitRating(5)" style="width: auto; padding: 5px 10px;">⭐⭐⭐⭐⭐</button>
+        <button onclick="submitRating(4)" style="width: auto; padding: 5px 10px;">⭐⭐⭐⭐</button>
+        <button onclick="submitRating(3)" style="width: auto; padding: 5px 10px;">⭐⭐⭐</button>
+    </div>
+    <p id="ratingStatus" style="font-size: 0.8em; color: #28a745;"></p>
+</div>
+        
     </footer>
 </body>
 </html>
