@@ -139,7 +139,7 @@
 
     <script>
         // ضع رابط الـ Deployment الجديد هنا
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx9PKeZc8uXdp4iurDi2sxTp-ie98sFeVBdLb1fppjUYqRkakJOMd7D0vfSR7PDclMQvg/exec";
+        const SCRIPT_URL = ('https://script.google.com/macros/s/AKfycbx9PKeZc8uXdp4iurDi2sxTp-ie98sFeVBdLb1fppjUYqRkakJOMd7D0vfSR7PDclMQvg/exec?cpr=${cpr}`)";
 
         async function fetchGrades() {
             const cpr = document.getElementById('cprInput').value.trim();
