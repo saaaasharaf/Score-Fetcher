@@ -137,130 +137,128 @@
         </div>
     </footer>
 
-    <script>
-        // ضع رابط الـ Deployment الجديد هنا
-        const SCRIPT_URL = ('https://script.google.com/macros/s/AKfycbx9PKeZc8uXdp4iurDi2sxTp-ie98sFeVBdLb1fppjUYqRkakJOMd7D0vfSR7PDclMQvg/exec?cpr=${cpr}`)";
+  <script>
+    // تم تصحيح السطر أدناه
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUi4RK79Nh___Qga2N56qtbNDqsT7mtqV3WtTXe4-0EG0n46X8XEg-FjAApkZjnZP5OQ/exec";
 
-        async function fetchGrades() {
-            const cpr = document.getElementById('cprInput').value.trim();
-            const resultDiv = document.getElementById('result');
-            const studentHeader = document.getElementById('studentHeader');
-            const studentNameDiv = document.getElementById('studentName');
-            const studentClassDiv = document.getElementById('studentClass');
-            const loadingDiv = document.getElementById('loading');
-            const errorPopup = document.getElementById('errorPopup');
-            const errorMessage = document.getElementById('errorMessage');
+    async function fetchGrades() {
+        const cpr = document.getElementById('cprInput').value.trim();
+        const resultDiv = document.getElementById('result');
+        const studentHeader = document.getElementById('studentHeader');
+        const studentNameDiv = document.getElementById('studentName');
+        const studentClassDiv = document.getElementById('studentClass');
+        const loadingDiv = document.getElementById('loading');
+        const errorPopup = document.getElementById('errorPopup');
+        const errorMessage = document.getElementById('errorMessage');
 
-            resultDiv.innerHTML = '';
-            resultDiv.classList.add('hidden');
-            studentHeader.classList.add('hidden');
-            
-            if (!cpr) {
-                errorMessage.textContent = 'يرجى إدخال الرقم الشخصي';
+        resultDiv.innerHTML = '';
+        resultDiv.classList.add('hidden');
+        studentHeader.classList.add('hidden');
+        
+        if (!cpr) {
+            errorMessage.textContent = 'يرجى إدخال الرقم الشخصي';
+            errorPopup.style.display = 'flex';
+            return;
+        }
+
+        loadingDiv.classList.remove('hidden');
+
+        try {
+            const response = await fetch(`${SCRIPT_URL}?cpr=${cpr}`);
+            const data = await response.json();
+
+            if (data.error) {
+                errorMessage.textContent = data.error;
                 errorPopup.style.display = 'flex';
                 return;
             }
 
-            loadingDiv.classList.remove('hidden');
+            if (data && data.length > 0) {
+                const student = data[0];
+                let hasHeaderInfo = false;
 
-            try {
-                const response = await fetch(`${SCRIPT_URL}?cpr=${cpr}`);
-                const data = await response.json();
-
-                if (data.error) {
-                    errorMessage.textContent = data.error;
-                    errorPopup.style.display = 'flex';
-                    return;
+                if (student["اسم الطالب"]) {
+                    studentNameDiv.innerHTML = student["اسم الطالب"];
+                    hasHeaderInfo = true;
                 }
 
-                if (data && data.length > 0) {
-                    const student = data[0];
-                    let hasHeaderInfo = false;
-
-                    if (student["اسم الطالب"]) {
-                        studentNameDiv.innerHTML = student["اسم الطالب"];
-                        hasHeaderInfo = true;
-                    }
-
-                    const classKey = Object.keys(student).find(key => key.includes("الصف") || key.includes("الفرقة"));
-                    if (classKey) {
-                        studentClassDiv.innerHTML = "الصف: " + student[classKey];
-                        hasHeaderInfo = true;
-                    }
-
-                    if (hasHeaderInfo) studentHeader.classList.remove('hidden');
-
-                    let tableRows = '';
-                    for (const [key, value] of Object.entries(student)) {
-                        if (key !== "CPR" && key !== "اسم الطالب" && key !== classKey) {
-                            tableRows += `<tr><td>${key}</td><td>${value}</td></tr>`;
-                        }
-                    }
-
-                    resultDiv.innerHTML = `
-                        <h3>نتائج الوقفة التقويمية</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>المادة</th>
-                                    <th>الدرجة</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${tableRows}
-                            </tbody>
-                        </table>
-                    `;
-                    resultDiv.classList.remove('hidden');
-                } else {
-                    errorMessage.textContent = 'الرقم غير موجود';
-                    errorPopup.style.display = 'flex';
+                const classKey = Object.keys(student).find(key => key.includes("الصف") || key.includes("الفرقة"));
+                if (classKey) {
+                    studentClassDiv.innerHTML = "الصف: " + student[classKey];
+                    hasHeaderInfo = true;
                 }
-            } catch (error) {
-                errorMessage.textContent = 'خطأ في الاتصال بالسيرفر';
+
+                if (hasHeaderInfo) studentHeader.classList.remove('hidden');
+
+                let tableRows = '';
+                for (const [key, value] of Object.entries(student)) {
+                    if (key !== "CPR" && key !== "اسم الطالب" && key !== classKey) {
+                        tableRows += `<tr><td>${key}</td><td>${value}</td></tr>`;
+                    }
+                }
+
+                resultDiv.innerHTML = `
+                    <h3>نتائج الوقفة التقويمية</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>المادة</th>
+                                <th>الدرجة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                `;
+                resultDiv.classList.remove('hidden');
+            } else {
+                errorMessage.textContent = 'الرقم غير موجود';
                 errorPopup.style.display = 'flex';
-            } finally {
-                loadingDiv.classList.add('hidden');
             }
+        } catch (error) {
+            errorMessage.textContent = 'خطأ في الاتصال بالسيرفر';
+            errorPopup.style.display = 'flex';
+        } finally {
+            loadingDiv.classList.add('hidden');
         }
+    }
 
-        function closePopup() {
-            document.getElementById('errorPopup').style.display = 'none';
-        }
+    function closePopup() {
+        document.getElementById('errorPopup').style.display = 'none';
+    }
 
-        // --- وظائف العداد والتقييم ---
+    window.onload = function() {
+        updateVisitorCount();
+    };
 
-        window.onload = function() {
-            updateVisitorCount();
-        };
-
-        async function updateVisitorCount() {
-            try {
-                const response = await fetch(`${SCRIPT_URL}?action=getCount`);
-                const data = await response.json();
-                if (data.visitorCount) {
-                    document.getElementById('count').innerText = data.visitorCount;
-                } else {
-                    document.getElementById('count').innerText = "1";
-                }
-            } catch (e) {
-                document.getElementById('count').innerText = "متوفر حالياً";
+    async function updateVisitorCount() {
+        try {
+            const response = await fetch(`${SCRIPT_URL}?action=getCount`);
+            const data = await response.json();
+            if (data.visitorCount) {
+                document.getElementById('count').innerText = data.visitorCount;
+            } else {
+                document.getElementById('count').innerText = "1";
             }
+        } catch (e) {
+            document.getElementById('count').innerText = "متوفر حالياً";
         }
+    }
 
-        async function submitRating(stars) {
-            const status = document.getElementById('ratingStatus');
-            status.innerText = "جاري الحفظ...";
-            
-            try {
-                await fetch(`${SCRIPT_URL}?rating=${stars}`);
-                status.innerText = "شكراً لتقييمك!";
-                document.querySelectorAll('#ratingSection button').forEach(btn => btn.disabled = true);
-            } catch (e) {
-                status.innerText = "شكراً لك (تم التقييم)";
-                document.querySelectorAll('#ratingSection button').forEach(btn => btn.disabled = true);
-            }
+    async function submitRating(stars) {
+        const status = document.getElementById('ratingStatus');
+        status.innerText = "جاري الحفظ...";
+        
+        try {
+            await fetch(`${SCRIPT_URL}?rating=${stars}`);
+            status.innerText = "شكراً لتقييمك!";
+            document.querySelectorAll('#ratingSection button').forEach(btn => btn.disabled = true);
+        } catch (e) {
+            status.innerText = "شكراً لك (تم التقييم)";
+            document.querySelectorAll('#ratingSection button').forEach(btn => btn.disabled = true);
         }
-    </script>
+    }
+</script>
 </body>
 </html>
