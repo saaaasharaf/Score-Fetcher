@@ -37,8 +37,10 @@
             border: none;
             cursor: pointer;
             font-weight: bold;
+            transition: background 0.3s;
         }
         button:hover { background-color: #002244; }
+        
         table {
             margin-top: 20px;
             border-collapse: collapse;
@@ -54,6 +56,7 @@
         }
         th { background-color: #003366; color: white; }
         .hidden { display: none; }
+        
         .student-info {
             margin-top: 20px;
             background: white;
@@ -65,6 +68,7 @@
         }
         .student-name { font-weight: bold; font-size: 1.3em; color: #003366; margin-bottom: 5px; }
         .student-class { font-size: 1.1em; color: #555; }
+        
         .popup {
             display: none;
             position: fixed;
@@ -81,11 +85,32 @@
             border-radius: 5px;
             text-align: center;
         }
-        #ratingSection button {
-            width: auto;
-            padding: 5px 10px;
-            margin: 2px;
-            font-size: 0.9em;
+
+        /* تنسيق أزرار التقييم الجديد */
+        #ratingSection {
+            margin-top: 15px;
+        }
+        .stars-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            direction: ltr;
+        }
+        .rating-btn {
+            width: auto !important;
+            padding: 5px 10px !important;
+            margin: 2px !important;
+            font-size: 0.9em !important;
+            background-color: #fff !important;
+            color: #003366 !important;
+            border: 1px solid #003366 !important;
+            cursor: pointer;
+        }
+        .rating-btn:hover {
+            background-color: #ffc107 !important;
+            border-color: #ffc107 !important;
+            color: #000 !important;
         }
     </style>
 </head>
@@ -118,7 +143,7 @@
     <footer style="margin-top:30px; border-top: 1px solid #ccc; padding-top: 20px; width: 100%; max-width: 400px;">
         <p>© مدرسة مدينة عيسى الإعدادية للبنين</p>
         <p>تصميم الأستاذ/ السيد علي شرف</p>
-        <p>مدير المدرسة / الأستاذ عبدالله الديري</p>
+        <p>مدير المدرسة / عبدالله الديري</p>
 
         <hr style="width: 50%; border: 0.5px solid #bbb; margin: 15px auto;">
 
@@ -127,18 +152,19 @@
         </div>
 
         <div id="ratingSection">
-            <p style="margin-bottom: 5px;">ما هو تقييمك للموقع؟</p>
-            <div style="direction: ltr;">
-                <button onclick="submitRating(5)">⭐⭐⭐⭐⭐</button>
-                <button onclick="submitRating(4)">⭐⭐⭐⭐</button>
-                <button onclick="submitRating(3)">⭐⭐⭐</button>
+            <p style="margin-bottom: 10px;">ما هو تقييمك للموقع؟</p>
+            <div class="stars-container">
+                <button class="rating-btn" onclick="submitRating(1)">⭐</button>
+                <button class="rating-btn" onclick="submitRating(2)">⭐⭐</button>
+                <button class="rating-btn" onclick="submitRating(3)">⭐⭐⭐</button>
+                <button class="rating-btn" onclick="submitRating(4)">⭐⭐⭐⭐</button>
+                <button class="rating-btn" onclick="submitRating(5)">⭐⭐⭐⭐⭐</button>
             </div>
             <p id="ratingStatus" style="font-size: 0.8em; color: #28a745; margin-top: 5px;"></p>
         </div>
     </footer>
 
   <script>
-    // تم تصحيح السطر أدناه
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUi4RK79Nh___Qga2N56qtbNDqsT7mtqV3WtTXe4-0EG0n46X8XEg-FjAApkZjnZP5OQ/exec";
 
     async function fetchGrades() {
